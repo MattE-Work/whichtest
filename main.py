@@ -213,7 +213,7 @@ if debug_mode == 'Yes':
     st.title('Debug section beneath this point')
 
     st.subheader(':blue[Testing all combinations of inputs:]')
-    from itertools import product
+    #from itertools import product
 
     # Define the options for each input parameter with logical conditions
     data_types = ['Nominal', 'Ordinal', 'Interval', 'Ratio']
