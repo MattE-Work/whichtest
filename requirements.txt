@@ -3,4 +3,4 @@ pandas
 numpy
 seaborn
 scipy
-import pingouin
+pingouin
