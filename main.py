@@ -1,6 +1,24 @@
 #import functions
 from functions import functions as func
 from stat_test_explanations import stat_test_explanations as st_exp
+from stats_test_functions import stats_tests as stat_tests
+from stats_test_functions import dummy_data_creator as dummy_data
+
+#import decision tree and user input module
+from functions import stat_test_decision_tree
+
+#import module to render assumptions for the selected test
+from stats_test_functions import render_assumptions
+
+#parametric test modules
+#from stats_test_functions import paired_t_test
+#from stats_test_functions import independent_t_test
+#from stats_test_functions import repeated_measures_anova_v1
+#from stats_test_functions import anova_test
+#from stats_test_functions import one_sample_t_test
+#from stats_test_functions import pearson_correlation
+#from stats_test_functions import chi_square_test_of_independence as chi_toi
+#from stats_test_functions import chi_square_goodness_of_fit as chi_gof
 
 #import libraries
 import streamlit as st
@@ -12,208 +30,233 @@ import seaborn as sns
 #start code
 st.set_page_config(page_icon='🔍', layout='wide')
 
+#list of tests in scope - status: 7 / 31 complete ! 
+stats_test_options = { 
+    'Chi-square goodness of fit': 'done', #done
+    'Chi-square test of independence': 'done', #done
+    "Cramer's V": 'To do',
+    'Exact test of Goodness of Fit (multinomial model)': 'To do',
+    'Exact test of Goodness of Fit': 'To do',
+    'Factorial ANOVA': 'To do',
+    'Fischers Exact test': 'To do', #working on
+    'G-test of Goodness of Fit': 'To do',
+    'G-test': 'To do',
+    'Independent samples T-test': 'done', #done
+    'Independent samples Z-test': 'To do',
+    "Kendall's Tau": 'To do',
+    'Kruskal-Wallis': 'To do',
+    'Log-linear analysis': 'To do',
+    'Mann-Whitney U Test': 'To do',
+    'McNemars test': 'To do',
+    'One-proportion z-test': 'To do',
+    'One-way ANCOVA': 'To do',
+    'One-way ANOVA': 'done', #done
+    'Paired samples T-test': 'done', #done
+    'Paired samples Z-test': 'To do',
+    'Partial correlation': 'To do',
+    'Pearson correlation': 'done', #done 
+    'Phi co-efficient': 'To do',
+    "Point biserial correlation": 'To do',
+    'Single sample T-test': 'done', #done
+    'Single sample wilcoxon signed-rank test': 'To do',
+    'Single sample Z-test': 'To do',
+    "Spearman's Rho": 'To do',
+    'Two proportion z-test': 'To do',
+    'Wilcoxon signed-rank test': 'To do',
+}
+
+#subset from the dictionary above to a list of those tests that are recorded as having been built
+stats_test_options_subset = [key for key, value in stats_test_options.items() if value == 'done']
+
+st.title(':blue[Which Stats Test?]')
 col1, col2 = st.columns(2)
 with col1:
-    st.title(':blue[Which Stats Test?]')
+    debug_mode = st.radio(label='Turn on debug mode (load dummy data)?', options=['Yes', 'No'], horizontal=True, index=1)
 with col2:
-    debug_mode = st.radio(label='Turn on debug mode?', options=['Yes', 'No'], horizontal=True, index=1)
+    filter_to_just_completed_tests = st.radio(label=f'Only inc. the {len(stats_test_options_subset)} built tests?', options=['Yes', 'No'], horizontal=True, index=1)
 
-# User inputs
-# User inputs with explanations
-
-col1, col2 = st.columns(2)
-with col1:
-    data_type = st.radio(
-        "What is the data type?",
-        ('Nominal', 'Ordinal', 'Interval', 'Ratio'),
-        horizontal=True,
-        help="""Data types reflect different levels of measurement:
-                \n- **Nominal:** Categories without a natural order. Example: Types of viruses (Influenza, Coronavirus, Rhinovirus).
-                \n- **Ordinal:** Categories with a natural order but not evenly spaced. Example: Stages of cancer (Stage I, II, III, IV).
-                \n- **Interval:** Numeric scales with equal spacing but no true zero point. Example: Temperature in Celsius when measuring fever.
-                \n- **Ratio:** Numeric scales with a true zero point. Example: Dosage of medication in milligrams."""
-    )
-
-    with col2:
-        if data_type == 'Interval' or data_type == 'Ratio':
-            is_normally_distributed = st.radio(
-                "Is the data normally distributed?",
-                ('Yes', 'No', 'Unknown'),
-                horizontal=True,
-                help="""'Normally distributed' refers to data that follows a normal distribution (bell-shaped curve). 
-                        \nMethods to assess normality include visual methods like histograms and Q-Q plots, or statistical tests like the Shapiro-Wilk test (small samples) and the Kolmogorov-Smirnov test (large samples). 
-                        \nExample: Checking normality in the distribution of systolic blood pressure readings across a population."""
-            )
-        else:
-            is_normally_distributed = 'Not applicable'
-
-col1, col2 = st.columns(2)
-with col1:
-    number_of_samples = st.radio(
-        "Number of samples:",
-        ('One', 'Two', 'More than two'),
-        horizontal=True,
-        help="""This refers to the number of distinct data groups or sets you are analyzing. 
-                \n- **'One'** means analyzing data from a single group.
-                \n- **'Two'** means comparing data between two groups, e.g., a control group and a treatment group in a clinical trial.
-                \n- **'More than two'** means comparing data across multiple groups, e.g., testing multiple treatments in a clinical study."""
-    )
+#determine whether to subset the pick-list to just the tests that are built
+if filter_to_just_completed_tests =='Yes':
+    stats_test_options = stats_test_options_subset
+else:
+    stats_test_options = [key for key in stats_test_options.keys()]
 
 
+how_to_use_tool = st.selectbox(
+    label='How do you want to use this tool?',
+    options=[
+        'Select a test from the list',
+        'Have the tool suggest the test to use'
+    ]
+)
 
-    if number_of_samples == 'One':
-        diff_help_text = """Testing for differences with one sample involves comparing the data against a hypothesized value. This is typically done to determine if the sample mean or median significantly deviates from a known or expected value. 
-                        \nExamples include: Comparing the average systolic blood pressure readings of a single group of patients against the global average to see if they are significantly higher or lower."""
-        association_help_text = """Testing for associations within one sample containing multiple variables involves assessing the relationship between these variables. This analysis can reveal whether and how variables are correlated. 
-        \nExamples include
-        \nAnalyzing the relationship between age and systolic blood pressure within a sample of patients to see if higher age is associated with higher blood pressure.
-        """
-    
-    elif number_of_samples == 'Two':
-        diff_help_text = """Testing for differences with two samples typically involves comparing two independent or paired groups to see if there is a significant difference between their means or medians.
-                            \nExamples include:
-                            \nComparing the effectiveness of two different medications on lowering blood pressure in two independent groups of patients.
-                            \nComparing pre-treatment and post-treatment cholesterol levels in the same group of patients to assess the effect of a new dietary program."""
-        association_help_text = """Testing for associations between two samples can involve comparing two variables across these groups to see if there is a relationship between them. Note: Typically, association tests between two samples require a linkage between the samples, such as matched pairs or repeated measures. 
-        \nExamples include:
-        \nComparing the increase in physical activity and decrease in blood sugar levels before and after an intervention in diabetic patients.
-        """
-    
-    else:
-        diff_help_text = """When you have more than two samples, testing for differences usually means comparing the means or medians across multiple groups to see if at least one differs significantly from the others.
-        \nExamples include:
-        \nComparing the response to three different types of vaccines across three groups of patients to determine which vaccine leads to the highest antibody count.
-        """
-        association_help_text = """Associations in the context of more than two samples may focus on multivariate relationships across groups, such as investigating how different variables interact across different conditions.
-        \nExamples include:
-        \nAnalyzing how patient age, treatment type, and recovery time are related across several groups in a clinical trial.
-        """
+if how_to_use_tool != 'Select a test from the list':
 
+    #Render user inputs
+    dict_inputs = stat_test_decision_tree.render_inputs()
 
-with col2:
-        
-    if number_of_samples != 'One':
+    #Use inputs to determine recommended stats test(s)
+    list_recommendations = stat_test_decision_tree.recommend_test(dict_inputs)
 
-        sample_relationship = st.radio(
-            "Are the samples independent?",
-            ['Independent', 'Not Independent'],
-            horizontal=True,
-            help="""Samples are 'independent' if the data groups do not influence each other and are not related. 
-                    \nExample of independent samples: Comparing the incidence of flu in different regions. 
-                    \nSamples are not independent (i.e., dependent) if the groups are related, such as pre- and post-treatment cholesterol levels in the same patients."""
-        )
-        num_variables = 'Not applicable'
+    if debug_mode == 'Yes':
+        col1, col2 = st.columns(2)
+        with col1:
+            st.write(dict_inputs)
+        with col2:
+            st.write(list_recommendations)
 
-    else:
-        sample_relationship = 'Not applicable - only one sample'
-        
-        num_variables = st.radio(
-        "Number of variables in your dataset:",
-        ('One variable', 'Two variables'),
-        horizontal=True,
-        help="""Select the number of variables:
-                \n- **'One variable'** if you're looking to test a single characteristic, such as the proportion of a single categorical variable.
-                \n- **'Two variables'** if you're looking to test the association between two characteristics within your dataset.
-                """
-    )
-
-col1, col2 = st.columns(2)
-with col1:
-    if num_variables == 'One variable':
-        hypothesis_type = st.radio(
-            "Type of hypothesis:",
-            ['Differences'],
-            horizontal=True, 
-            index=0, 
-            disabled=True,
-            help=f"""Type of hypothesis to test:
-                    \n- **'Differences'** {diff_help_text}"""
-        ) 
-    
-    elif number_of_samples == 'Two':
-        hypothesis_type = st.radio(
-            "Type of hypothesis:",
-            ['Differences'],
-            horizontal=True, 
-            index=0, 
-            disabled=True,
-            help=f"""Type of hypothesis to test:
-                    \n- **'Differences'** {diff_help_text}"""
-        ) 
-    
-    elif num_variables == 'Two variables':
-        hypothesis_type = st.radio(
-            "Type of hypothesis:",
-            ['Associations'],
-            horizontal=True,
-            index=0,
-            disabled=True,
-            help=f"""Type of hypothesis to test:
-                    \n- **'Associations'** {association_help_text}."""
-        ) 
-    
-    elif number_of_samples == 'More than two' and sample_relationship == 'Not Independent':
-        hypothesis_type = st.radio(
-            "Type of hypothesis:",
-            ['Differences'],
-            horizontal=True,
-            index=0,
-            disabled=True,
-            help=f"""Type of hypothesis to test:
-                    \n- **'Differences'** {diff_help_text}."""
-        ) 
-    else:
-        hypothesis_type = st.radio(
-            "Type of hypothesis:",
-            ('Differences', 'Associations'),
-            horizontal=True,
-            help=f"""Type of hypothesis to test:
-                    \n- **'Differences'** {diff_help_text}
-                    \n- **'Associations'** {association_help_text}."""
-        ) 
-
-
-# pass inputs to the function to identify the recommended stats test(s) to use
-recommendations, recommendations_keys = func.recommend_test(data_type, is_normally_distributed, number_of_samples, sample_relationship, hypothesis_type, num_variables)
-
-dict_test_explanations = st_exp.get_dict_test_explanation()
-dict_test_videos = st_exp.get_test_explanation_video()
-
-
-for key in dict_test_explanations.keys():
-    dict_test_explanations[key]['video'] = dict_test_videos[key]
-
+# ----------------------------
 st.header(':blue[Recommended Stats Test(s):]')
-for test_index in range(len(recommendations)):
-    test_name = recommendations_keys[test_index]
-    test_name_for_expander = recommendations[test_index]
-    test_details = dict_test_explanations[test_name]  # Access the dictionary for this particular test
 
-    st.subheader(test_name_for_expander)
-    with st.expander(f"{test_name_for_expander} - Click for information about this test"):
-        tab_keys = test_details.keys()  # Get all keys which are tab names like 'Explanation', 'Requirements', etc.
-        tabs = st.tabs([key for key in tab_keys])  # Create a tab for each key
+if how_to_use_tool != 'Select a test from the list':
+    selected_recommended_test = st.selectbox(label='Select the recommended test to use', options=list_recommendations, index=0)
 
-        for tab, key in zip(tabs, tab_keys):
-            with tab:
-                if test_details[key] != 'video':
-                    st.write(test_details[key])  # Display the content under each tab corresponding to the key
-                else:
-                    st.video(test_details[key])
+#Select test to use from the list
+else:
+    selected_recommended_test = st.selectbox(label='Select the recommended test to use', options=stats_test_options, index=0)
 
-    with st.expander(f"{test_name_for_expander} video"):
-        st.video(test_details[key])
+
+#list_selected_recommended_test = []
+#list_selected_recommended_test.append(selected_recommended_test)
+
+dict_test_explanations = st_exp.get_dict_test_explanation(selected_recommended_test)
+
+#st.subheader(test_name_for_expander)
+with st.expander(f"Click for information about this test"):
+    tab_keys = dict_test_explanations.keys()  # Get all keys which are tab names like 'Explanation', 'Requirements', etc.
+    tabs = st.tabs([key for key in tab_keys])  # Create a tab for each key
+
+    for tab, key in zip(tabs, tab_keys):
+        with tab:
+            if key != 'video':
+                st.write(dict_test_explanations[key])  # Display the content under each tab corresponding to the key
+            else:
+                width=40
+                side = max((100 - width) / 2, 0.01)
+
+                #st.video(test_details[key])
+                _, container, _ = st.columns([side, width, side])
+                container.video(data=dict_test_explanations[key])
+
+# ----------------------------
+
 
 #--------------------------------------------
-st.header(':blue[Running the tests]')
-st.write('To update with a feature to either enable running the test(s) in the app, and/or instructions on how to run in python or excel etc.')
+st.header(':blue[Select your data]')
 
+df_location = st.file_uploader("Select the file containing your data you wish to run through the appropriate stats test", type=['csv', 'xlsx'])
+dummy_data.expected_data_structure_examples(selected_recommended_test)
+
+if df_location is None and debug_mode != 'Yes':
+    st.stop()
+
+if debug_mode == 'Yes':
+    #produce dummy data
+    df = dummy_data.get_dummy_data_for_tests(selected_recommended_test)
+
+    #advise user dummy data in use
+    st.write(':red[**Debug mode on and dummy data in use**]')
+
+else:
+    df = pd.DataFrame(df_location)
+
+#--------------------------------------------
+
+
+st.header(':blue[Checking assumptions...]')
+#display the test(s) applicable based on the inputs provided, along with any prior assumption checks before running the test, if applicable
+
+#CONTINUE FROM HERE
+#DEV SECTION - Working on chi square goodness of fit test
+
+try:
+    test_bool_result = render_assumptions.render_assumptions_for_selected_test(selected_recommended_test, df)
+except:
+    st.write('Make the required selections using the drop down boxes above')
+    st.stop()
+    
+if test_bool_result == False:
+    alt_test = render_assumptions.get_alternative_test(selected_recommended_test)
+    st.write(f":red[Recommend using the alternative test: **{alt_test}**]")
+    selected_recommended_test = alt_test
+
+#Identify the index of the recommended list. Use this later to default the test confirmation 
+#to the recommended test
+recommended_test_index = stats_test_options.index(selected_recommended_test)
+
+
+#if "Paired t-test (for normally distributed data)" in list_selected_recommended_test:
+#    normal_dist_can_use_paired_t = paired_t_test.render_assumption_checks_for_paired_t_test(df)
+    
+#elif "Independent t-test (for normally distributed data)" in list_selected_recommended_test:
+#    independent_t_test.render_assumption_checks_for_independent_t_test(df)
+
+#elif "Repeated measures ANOVA (for normally distributed data)" in list_selected_recommended_test:
+#    rm_anova_assumptions_met = repeated_measures_anova_v1.render_assumption_checks_for_repeated_measures_anova(df)
+
+#elif "ANOVA (for normally distributed data)" in list_selected_recommended_test:
+#    group_column, value_column = anova_test.select_columns_for_anova_test(df)
+    
+#elif 'One-sample t-test' in list_selected_recommended_test:
+#    selected_column = one_sample_t_test.select_column_for_one_sample_t_test(df)
+    
+#    one_sample_t_test_assumptions_met = one_sample_t_test.render_one_sample_t_test_checks(df, selected_column)
+#    if one_sample_t_test_assumptions_met == False:
+#        alternative = ' Wilcoxon Signed-Rank Test' #TODO add creation of alternative variable to all other test checks above to simplify decision making for running the test (e.g. confirm run original suggestion, or, default to alternative)
+
+#elif 'Pearson Correlation (for normally distributed data)' in list_selected_recommended_test:
+    #render pearson correlation assumptions
+    #pearson_correlation.display_pearson_correlation_assumptions()
+    
+    #user selects columns 1 and 2
+    #selected_column_1, selected_column_2 = pearson_correlation.select_two_columns_for_pearson_correlation_test(df)
+    
+    #check normality assumption - Q-Q plot
+    #pearson_correlation.check_normality_qqplot_altair(df, selected_column_1, selected_column_2)
+    
+    #check normality assumption - shapiro wilk plot
+    #dict_shapiro_wilk_check_for_each_variable = pearson_correlation.check_normality_pearson_correlation_shapiro(df, selected_column_1, selected_column_2)
+
+    #visualise linearity check
+    #pearson_correlation.check_linearity_scatter_plot(df, selected_column_1, selected_column_2)
+
+    #check homoscedascity
+    #pearson_correlation.check_homoscedasticity(df, selected_column_1, selected_column_2)
+
+    #user confirm interpretation:
+    #pearson_correlation.check_assumptions_and_recommend_test(dict_shapiro_wilk_check_for_each_variable)
+
+#    proceed_with_pearson_correlation = pearson_correlation.render_assumption_checks_for_pearson_correlation(df)
+#    if proceed_with_pearson_correlation == False:
+#        alternative = "Spearman's rank correlation coefficient"
+
+
+
+#--------------------------------------------
+#Section TODO to enable selecting the relevant test
+
+st.title('Confirm which stat test to use')
+
+#user input to confirm chosen test
+selected_test = st.selectbox(label='Select the test to use', options = stats_test_options, index=recommended_test_index)
+
+#--------------------------------------------
+
+#section TODO to incorporate running the selected test.
+
+button = st.button('Run selected stats test')
+if button:
+    pass
+else:
+    st.stop()
+
+#--------------------------------------------
 
 if debug_mode == 'Yes':
     st.title('Debug section beneath this point')
 
     st.subheader(':blue[Testing all combinations of inputs:]')
-    #from itertools import product
+    from itertools import product
 
     # Define the options for each input parameter with logical conditions
     data_types = ['Nominal', 'Ordinal', 'Interval', 'Ratio']

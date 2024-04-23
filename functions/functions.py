@@ -125,11 +125,12 @@ def recommend_test(data_type, is_normally_distributed, number_of_samples, sample
 
     elif hypothesis_type == 'Associations' and number_of_samples != 'One':
         if data_type in ['Interval', 'Ratio']:
-            if is_normally_distributed == 'Yes':
-                recommendations.append('Pearson Correlation (for normally distributed data)')
-                recommendations_keys.append('pearson_correlation')
-                
-            else:
+            #if is_normally_distributed == 'Yes':
+                #PEARSON INCORRECT HERE
+                #recommendations.append('Pearson Correlation (for normally distributed data)')
+                #recommendations_keys.append('pearson_correlation')
+            
+            #else:
                 recommendations.append('Spearman Rank Correlation (for non-normally distributed data)')
                 recommendations_keys.append('spearman_rank_correlation')
 

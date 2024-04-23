@@ -388,6 +388,50 @@ def explain_mcnemars_test():
 
 #-----------------------------------------------------------------------
 
+def get_dict_test_explanation(test_name):
+
+    placeholder_text = 'Functionality not yet built'
+
+    dict_tests_and_recommendations = {
+    'Chi-square goodness of fit': explain_chi_square_goodness_of_fit(),
+    'Chi-square test of independence': explain_chi_square_test_of_independence(),
+    "Cramer's V": placeholder_text,
+    'Exact test of Goodness of Fit (multinomial model)': placeholder_text,
+    'Exact test of Goodness of Fit': placeholder_text,
+    'Factorial ANOVA': placeholder_text,
+    'Fischers Exact test': placeholder_text,
+    'G-test of Goodness of Fit': placeholder_text,
+    'G-test': placeholder_text,
+    'Independent samples T-test': explain_independent_t_test(),
+    'Independent samples Z-test': placeholder_text,
+    "Kendall's Tau": explain_kendalls_tau(),
+    'Kruskal-Wallis': explain_kruskal_wallis(),
+    'Log-linear analysis': placeholder_text,
+    'Mann-Whitney U Test': explain_mann_whitney_u_test(),
+    'McNemars test': explain_mcnemars_test(),
+    'One-proportion z-test': placeholder_text,
+    'One-way ANCOVA': placeholder_text,
+    'One-way ANOVA': explain_anova(),
+    'Paired samples T-test': explain_paired_t_test(),
+    'Paired samples Z-test': placeholder_text,
+    'Partial correlation': placeholder_text,
+    'Pearson correlation': explain_pearson_correlation(),
+    'Phi co-efficient': placeholder_text,
+    "Point biserial correlation": placeholder_text,
+    'Single sample T-test': explain_one_sample_t_test(),
+    'Single sample wilcoxon signed-rank test': explain_one_sample_wilcoxon(),
+    'Single sample Z-test': placeholder_text,
+    "Spearman's Rho": placeholder_text,
+    'Two proportion z-test': placeholder_text,
+    'Wilcoxon signed-rank test': explain_wilcoxon_signed_rank(),
+    }
+
+    dict_for_selected_test = dict_tests_and_recommendations[test_name]
+    dict_for_selected_test['video'] = get_test_explanation_video(test_name)
+
+    return dict_for_selected_test
+
+'''
 def get_dict_test_explanation():
     dict_tests_and_recommendations = {
         'one_sample_t_test': explain_one_sample_t_test(),
@@ -411,12 +455,58 @@ def get_dict_test_explanation():
     }
 
     return dict_tests_and_recommendations
+'''
 
 #-----------------------------------------------------------------------
+def get_test_explanation_video(test_name):
 
+    placeholder_text = 'Video link not yet included'
+
+
+    dict_tests_and_recommendations = {
+    'Chi-square goodness of fit': 'https://youtu.be/y24q6BhRiDc?si=hfiGfJK0GUwQ32d5',
+    'Chi-square test of independence': 'https://youtu.be/NTHA9Qa81R8?si=bsnhuJkPWpPEiOsC',
+    "Cramer's V": placeholder_text,
+    'Exact test of Goodness of Fit (multinomial model)': placeholder_text,
+    'Exact test of Goodness of Fit': placeholder_text,
+    'Factorial ANOVA': placeholder_text,
+    'Fischers Exact test': placeholder_text,
+    'G-test of Goodness of Fit': placeholder_text,
+    'G-test': placeholder_text,
+    'Independent samples T-test': 'https://youtu.be/ujLHJKrgx1A?si=AaR8Afe8GIUiJZLw',
+    'Independent samples Z-test': placeholder_text,
+    "Kendall's Tau": 'https://youtu.be/Pm8KV5f3JM0?si=v0xnR_poOFzikKGh',
+    'Kruskal-Wallis': 'https://youtu.be/l86wEhUzkY4?si=9NUInmGQURglCp3z',
+    'Log-linear analysis': placeholder_text,
+    'Mann-Whitney U Test': 'https://youtu.be/LcxB56PzylA?si=jLywahNmxFjEQuwh',
+    'McNemars test': 'https://youtu.be/p338YiJVi18?si=q3thjHuE7XexzExW',
+    'One-proportion z-test': placeholder_text,
+    'One-way ANCOVA': placeholder_text,
+    'One-way ANOVA': 'https://youtu.be/0NwA9xxxtHw?si=9v6gx6prN6tKmEIC',
+    'Paired samples T-test': 'https://youtu.be/_7IW2PUqe64?si=34J7xDSPI07f7NFX',
+    'Paired samples Z-test': placeholder_text,
+    'Partial correlation': placeholder_text,
+    'Pearson correlation': 'https://youtu.be/k7IctLRiZmo?si=auIioQ9hPPNis_Xv',
+    'Phi co-efficient': placeholder_text,
+    "Point biserial correlation": placeholder_text,
+    'Single sample T-test': 'https://youtu.be/pXuFeRCMTAo?si=bponMzjdrDQFtwx9',
+    'Single sample wilcoxon signed-rank test': 'https://youtu.be/EvpqzUN56sA?si=LQTLl2e2TUMTO458',
+    'Single sample Z-test': placeholder_text,
+    "Spearman's Rho": placeholder_text,
+    'Two proportion z-test': placeholder_text,
+    'Wilcoxon signed-rank test': 'https://youtu.be/EvpqzUN56sA?si=LQTLl2e2TUMTO458',
+    }
+
+    video_url = dict_tests_and_recommendations[test_name]
+
+    return video_url
+
+
+#-----------------------------------------------------------------------
+'''
 def get_test_explanation_video():
     dict_tests_and_recommendations = {
-        'one_sample_t_test': 'https://youtu.be/pXuFeRCMTAo?si=bponMzjdrDQFtwx9',
+    'one_sample_t_test': 'https://youtu.be/pXuFeRCMTAo?si=bponMzjdrDQFtwx9',
     'repeated_measures_anova': 'https://youtu.be/FIxzP4fmi3w?si=ln-E3pQje9MDCPE9',
     'chi_square_test_of_independence': 'https://youtu.be/NTHA9Qa81R8?si=bsnhuJkPWpPEiOsC',
     'one_sample_wilcoxon': 'https://youtu.be/EvpqzUN56sA?si=LQTLl2e2TUMTO458',
@@ -437,3 +527,4 @@ def get_test_explanation_video():
         }
     
     return dict_tests_and_recommendations
+'''
