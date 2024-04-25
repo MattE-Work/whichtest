@@ -24,7 +24,14 @@ def paired_t_test_assumptions():
         'No Outliers': "The paired differences should not have outliers. Outliers can significantly affect the mean and standard deviation, which are critical for the t-test, potentially leading to misleading results.",
         'Random Sampling': "The sample pairs should be drawn randomly from the population. This ensures that the samples accurately represent the population from which they are taken, allowing for generalizations of the test results to the broader population.",
     }
-    return dict_assumptions
+
+    with st.expander("Click for interpretation"):
+        st.write("""
+        **Interpreting Independence:**
+        - **Data Are Independent:** Suitable for the independent z-test. This setup is crucial because the test assumes no relationship between the members of different groups.
+        - **Data Are Not Independent:** The independent z-test may not be appropriate if there is any linkage or pairing between the groups’ members. In such cases, other tests designed for paired or matched data should be considered.
+        """)
+    #return dict_assumptions
 
 
 #Function to Check Normality using Q-Q Plot using Altair

@@ -18,6 +18,29 @@ def explain_one_sample_t_test():
     return {'Explanation': explanation, 'Requirements': requirements, 'Example Context': example_context, 'Test Type': test_type}
 
 #-----------------------------------------------------------------------
+#explain one sample z test
+def explain_one_sample_z_test():
+    explanation = """
+    The one-sample z-test is used to test whether the mean of a population is significantly different from a known or hypothesized value. Unlike the t-test, which assumes an unknown population standard deviation, the z-test assumes that the population standard deviation is known.
+    """
+    requirements = """
+    Requirements for the One-sample Z-test include:
+    - A single set of continuous data.
+    - Data must be approximately normally distributed.
+    - A known population mean with which to compare the sample mean.
+    """
+    example_context = """
+    Example:
+    Suppose we want to test whether a new medication affects IQ levels. We have a sample of 20 patients, and their IQ levels at the end of the month are as follows:
+    - Sample size (n): 20
+    - Sample mean IQ (x): 103.05
+    - Population mean IQ (μ₀): 100
+    - Population standard deviation (σ): 15
+    """
+    test_type = "Parametric"
+    return {'Explanation': explanation, 'Requirements': requirements, 'Example Context': example_context, 'Test Type': test_type}
+
+#-----------------------------------------------------------------------
 
 def explain_repeated_measures_anova():
     explanation = """
@@ -209,6 +232,31 @@ def explain_independent_t_test():
     return {'Explanation': explanation, 'Requirements': requirements, 'Example Context': example_context, 'Test Type': test_type}
 
 #-----------------------------------------------------------------------
+# Independent samples z-test
+# Independent z-test
+def explain_independent_z_test():
+    explanation = """
+    The independent z-test compares the means of two unrelated groups to determine if there is a statistically significant difference between them. This test is typically used when sample sizes are large and population variances are known.
+    """
+    requirements = """
+    Requirements for the independent z-test include:
+    - Two samples of continuous data that are independent of each other.
+    - Large sample sizes (often each group should have more than 30 observations).
+    - Known population variances, or the variances can be assumed based on large sample sizes.
+    - The data should be approximately normally distributed, especially as sample size decreases.
+    """
+    example_context = """
+    Healthcare Example:
+    Consider comparing the average blood pressure levels between patients treated with two different medications. Patients who received Medication A and those who received Medication B are independent groups. The independent z-test can be used to determine if there is a significant difference in average blood pressure levels between these two medications.
+    """
+
+    test_type = "Parametric"
+
+    return {'Explanation': explanation, 'Requirements': requirements, 'Example Context': example_context, 'Test Type': test_type}
+
+
+
+#-----------------------------------------------------------------------
 
 # Mann-Whitney U test
 def explain_mann_whitney_u_test():
@@ -388,6 +436,28 @@ def explain_mcnemars_test():
 
 #-----------------------------------------------------------------------
 
+def explain_fishers_exact_test():
+    explanation = """
+    Fisher's Exact Test is used to determine if there are non-random associations between two categorical variables in a 2x2 contingency table. Unlike the chi-square test, which approximates probabilities with a chi-square distribution, Fisher's test calculates the exact probability of observing the data as extreme as, or more extreme than, what is observed, assuming the null hypothesis is true.
+    """
+    requirements = """
+    Requirements for Fisher's Exact Test include:
+    - Data must be in a 2x2 contingency table format.
+    - The test is used for categorical data.
+    - Ideally suited for small sample sizes where the chi-square test assumptions might not hold, especially when expected frequencies in the contingency table are below 5.
+    """
+    example_context = """
+    Healthcare Example:
+    Evaluating the effectiveness of a new drug versus a placebo, where patients are categorized as either 'improved' or 'not improved'. Fisher's Exact Test can be used to analyze whether the proportions of improved patients differ significantly between the drug and placebo groups, particularly useful in studies with small sample sizes.
+    """
+    test_type = "Non-Parametric"
+    return {'Explanation': explanation, 'Requirements': requirements, 'Example Context': example_context, 'Test Type': test_type}
+
+
+
+
+#-----------------------------------------------------------------------
+
 def get_dict_test_explanation(test_name):
 
     placeholder_text = 'Functionality not yet built'
@@ -399,11 +469,11 @@ def get_dict_test_explanation(test_name):
     'Exact test of Goodness of Fit (multinomial model)': placeholder_text,
     'Exact test of Goodness of Fit': placeholder_text,
     'Factorial ANOVA': placeholder_text,
-    'Fischers Exact test': placeholder_text,
+    'Fischers Exact test': explain_fishers_exact_test(),
     'G-test of Goodness of Fit': placeholder_text,
     'G-test': placeholder_text,
     'Independent samples T-test': explain_independent_t_test(),
-    'Independent samples Z-test': placeholder_text,
+    'Independent samples Z-test': explain_independent_z_test(),
     "Kendall's Tau": explain_kendalls_tau(),
     'Kruskal-Wallis': explain_kruskal_wallis(),
     'Log-linear analysis': placeholder_text,
@@ -420,7 +490,7 @@ def get_dict_test_explanation(test_name):
     "Point biserial correlation": placeholder_text,
     'Single sample T-test': explain_one_sample_t_test(),
     'Single sample wilcoxon signed-rank test': explain_one_sample_wilcoxon(),
-    'Single sample Z-test': placeholder_text,
+    'Single sample Z-test': explain_one_sample_z_test(),
     "Spearman's Rho": placeholder_text,
     'Two proportion z-test': placeholder_text,
     'Wilcoxon signed-rank test': explain_wilcoxon_signed_rank(),
@@ -470,11 +540,11 @@ def get_test_explanation_video(test_name):
     'Exact test of Goodness of Fit (multinomial model)': placeholder_text,
     'Exact test of Goodness of Fit': placeholder_text,
     'Factorial ANOVA': placeholder_text,
-    'Fischers Exact test': placeholder_text,
+    'Fischers Exact test': 'https://www.youtube.com/watch?v=jwkP_ERw9Ak',
     'G-test of Goodness of Fit': placeholder_text,
     'G-test': placeholder_text,
     'Independent samples T-test': 'https://youtu.be/ujLHJKrgx1A?si=AaR8Afe8GIUiJZLw',
-    'Independent samples Z-test': placeholder_text,
+    'Independent samples Z-test': 'https://www.youtube.com/watch?v=5ABpqVSx33I',
     "Kendall's Tau": 'https://youtu.be/Pm8KV5f3JM0?si=v0xnR_poOFzikKGh',
     'Kruskal-Wallis': 'https://youtu.be/l86wEhUzkY4?si=9NUInmGQURglCp3z',
     'Log-linear analysis': placeholder_text,
@@ -491,7 +561,7 @@ def get_test_explanation_video(test_name):
     "Point biserial correlation": placeholder_text,
     'Single sample T-test': 'https://youtu.be/pXuFeRCMTAo?si=bponMzjdrDQFtwx9',
     'Single sample wilcoxon signed-rank test': 'https://youtu.be/EvpqzUN56sA?si=LQTLl2e2TUMTO458',
-    'Single sample Z-test': placeholder_text,
+    'Single sample Z-test': 'https://www.youtube.com/watch?v=BWJRsY-G8u0',
     "Spearman's Rho": placeholder_text,
     'Two proportion z-test': placeholder_text,
     'Wilcoxon signed-rank test': 'https://youtu.be/EvpqzUN56sA?si=LQTLl2e2TUMTO458',

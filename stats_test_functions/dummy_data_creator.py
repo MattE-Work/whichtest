@@ -33,7 +33,7 @@ def create_dummy_data_pearson_correlation(num_samples=100, random_seed=42):
 
 
 #--------------------------
-
+#single sample t test
 def create_dummy_data_one_sample_t_test(num_samples=30, random_seed=42):
     """
     Generates a dummy dataset for testing the one-sample t-test.
@@ -55,6 +55,32 @@ def create_dummy_data_one_sample_t_test(num_samples=30, random_seed=42):
     df = pd.DataFrame(data)
 
     return df
+
+#--------------------------
+#single sample z test
+def create_dummy_data_one_sample_z_test(num_samples=200, random_seed=42):
+    """
+    Generates a dummy dataset for testing the one-sample z-test.
+
+    Args:
+    num_samples (int): Number of samples in the dataset.
+    random_seed (int): Seed for the random number generator to ensure reproducibility.
+
+    Returns:
+    DataFrame: A pandas DataFrame with a single column 'Values' containing the sample data.
+    """
+    np.random.seed(random_seed)  # Set the random seed for reproducibility
+
+    # Generate data: Random normal data around a hypothetical population mean (e.g., 50) with some added noise
+    data = np.random.normal(loc=50, scale=10, size=num_samples)  # loc is the mean, scale is the standard deviation
+
+    # Create DataFrame
+    data = pd.DataFrame(data, columns=['Values'])['Values']
+    df = pd.DataFrame(data)
+
+    return df
+
+
 
 #--------------------------
 
@@ -155,6 +181,114 @@ def create_long_format_data_for_chi_square_test_independence():
     return df
 
 #--------------------------
+#Fishers exact test dummy data
+def create_dummy_data_for_fishers_test():
+    """
+    Generates a dummy dataset for testing Fisher's Exact Test.
+
+    Returns:
+    DataFrame: A pandas DataFrame with columns for two categorical variables.
+    """
+    np.random.seed(42)  # For reproducible results
+    
+    # Data parameters
+    num_samples = 40
+    group_labels = ['Group1', 'Group2']
+    outcome_labels = ['Success', 'Failure']
+    
+    # Generate random categorical data
+    data = {
+        'Group': np.random.choice(group_labels, num_samples),
+        'Outcome': np.random.choice(outcome_labels, num_samples, p=[0.3, 0.7])
+    }
+    
+    df = pd.DataFrame(data)
+    return df
+
+#--------------------------
+
+def create_dummy_data_mcnemars():
+    """
+    Generates a dummy dataset for testing McNemar's Test.
+    
+    Returns:
+    DataFrame: A pandas DataFrame with columns simulating before and after conditions in a binary outcome scenario.
+    """
+    np.random.seed(42)  # For reproducible results
+    
+    # Simulating data
+    data = {
+        'Participant': range(1, 101),  # 100 participants
+        'Before': np.random.choice(['Pass', 'Fail'], 100, p=[0.5, 0.5]),
+        'After': np.random.choice(['Pass', 'Fail'], 100, p=[0.5, 0.5])
+    }
+    
+    df = pd.DataFrame(data)
+    
+    # Introducing some changes between 'Before' and 'After' conditions
+    # Let's assume an intervention that improves chances slightly
+    change_indices = np.random.choice(df.index, size=20, replace=False)  # Randomly choosing indices to change
+    df.loc[change_indices, 'After'] = 'Pass'  # Changing to 'Pass'
+
+    return df
+#--------------------------
+#kruskal wallis dummy data creation function
+
+def create_dummy_data_kruskal_wallis():
+    """
+    Generates a dummy dataset for testing the Kruskal-Wallis H-test.
+
+    Returns:
+    DataFrame: A pandas DataFrame with columns for 'Group' and 'Score', representing three different groups.
+    """
+    np.random.seed(42)  # For reproducible results
+
+    # Generate data
+    group_a = np.random.normal(20, 5, 30)  # Group A data
+    group_b = np.random.normal(25, 5, 30)  # Group B data
+    group_c = np.random.normal(22, 5, 30)  # Group C data
+
+    # Create DataFrame
+    df = pd.DataFrame({
+        'Group': ['A']*30 + ['B']*30 + ['C']*30,
+        'Score': np.concatenate([group_a, group_b, group_c])
+    })
+
+    return df
+
+#--------------------------
+#independent z test dummy data
+def create_dummy_data_independent_z_test(num_samples=1000, mean1=50, std1=5, mean2=55, std2=5):
+    """
+    Generates a dummy dataset for testing the independent z-test in wide format.
+
+    Args:
+    num_samples (int): Number of samples in each group.
+    mean1 (float): Mean of the first group.
+    std1 (float): Standard deviation of the first group.
+    mean2 (float): Mean of the second group.
+    std2 (float): Standard deviation of the second group.
+
+    Returns:
+    DataFrame: A pandas DataFrame with two columns, each representing a sample group.
+    """
+    # Generate data for each group
+    data1 = np.random.normal(loc=mean1, scale=std1, size=num_samples)
+    data2 = np.random.normal(loc=mean2, scale=std2, size=num_samples)
+    
+    # Create a DataFrame with wide format
+    df = pd.DataFrame({
+        'sample_1': data1,
+        'sample_2': data2
+    })
+    return df
+
+
+#--------------------------
+
+
+
+#--------------------------
 #Function to produce dummy data for each test - for debug mode / build use
 #--------------------------
 '''
@@ -244,19 +378,16 @@ def get_dummy_data_for_tests(selected_recommended_test):
     'Exact test of Goodness of Fit (multinomial model)': placeholder_text,
     'Exact test of Goodness of Fit': placeholder_text,
     'Factorial ANOVA': placeholder_text,
-    'Fischers Exact test': placeholder_text,
+    'Fischers Exact test': create_dummy_data_for_fishers_test(),
     'G-test of Goodness of Fit': placeholder_text,
     'G-test': placeholder_text,
     'Independent samples T-test': pd.DataFrame((base_data, shifted_data)).T.rename(columns={0:'sample1', 1:'sample2'}),
-    'Independent samples Z-test': placeholder_text,
+    'Independent samples Z-test': create_dummy_data_independent_z_test(),
     "Kendall's Tau": (ordinal_data, np.sort(ordinal_data) * -1),
-    'Kruskal-Wallis': {
-            'data': np.random.normal(loc=[10, 12, 14], scale=1, size=(100, 3)),
-            'groups': np.repeat(['Group1', 'Group2', 'Group3'], 33)
-        },
+    'Kruskal-Wallis': create_dummy_data_kruskal_wallis(),
     'Log-linear analysis': placeholder_text,
     'Mann-Whitney U Test': (base_data, shifted_data),
-    'McNemars test': placeholder_text,
+    'McNemars test': create_dummy_data_mcnemars(),
     'One-proportion z-test': placeholder_text,
     'One-way ANCOVA': placeholder_text,
     'One-way ANOVA': create_dummy_data_anova(),
@@ -268,7 +399,7 @@ def get_dummy_data_for_tests(selected_recommended_test):
     "Point biserial correlation": placeholder_text,
     'Single sample T-test': create_dummy_data_one_sample_t_test(),
     'Single sample wilcoxon signed-rank test': (shifted_data, 12),
-    'Single sample Z-test': placeholder_text,
+    'Single sample Z-test': create_dummy_data_one_sample_z_test(),
     "Spearman's Rho": placeholder_text,
     'Two proportion z-test': placeholder_text,
     'Wilcoxon signed-rank test': (base_data, shifted_data),
@@ -327,7 +458,7 @@ def expected_data_structure_examples(test_name):
             st.write(placeholder_text)
 
         elif test_name == 'Fischers Exact test':
-            st.write(placeholder_text)
+            example_df = pd.DataFrame(get_dummy_data_for_tests(test_name)).iloc[:20,:]
 
         elif test_name == 'G-test of Goodness of Fit':
             st.write(placeholder_text)
@@ -339,13 +470,13 @@ def expected_data_structure_examples(test_name):
             example_df = pd.DataFrame(get_dummy_data_for_tests(test_name)).iloc[:20,:]
 
         elif test_name == 'Independent samples Z-test':
-            st.write(placeholder_text)
+            example_df = pd.DataFrame(get_dummy_data_for_tests(test_name))#.iloc[:20,:]
 
         elif test_name == "Kendall's Tau":
             st.write(placeholder_text)
 
         elif test_name == 'Kruskal-Wallis':
-            st.write(placeholder_text)
+            example_df = pd.DataFrame(get_dummy_data_for_tests(test_name)).iloc[:20,:]
 
         elif test_name == 'Log-linear analysis':
             st.write(placeholder_text)
@@ -354,7 +485,7 @@ def expected_data_structure_examples(test_name):
             st.write(placeholder_text)
 
         elif test_name == 'McNemars test':
-            st.write(placeholder_text)
+            example_df = pd.DataFrame(get_dummy_data_for_tests(test_name)).iloc[:20,:]
 
         elif test_name == 'One-proportion z-test':
             st.write(placeholder_text)
@@ -393,7 +524,7 @@ def expected_data_structure_examples(test_name):
             st.write(placeholder_text)
 
         elif test_name == 'Single sample Z-test':
-            st.write(placeholder_text)
+            example_df = pd.DataFrame(get_dummy_data_for_tests(test_name)).iloc[:20,:]
 
         elif test_name == "Spearman's Rho":
             st.write(placeholder_text)

@@ -30,7 +30,7 @@ import seaborn as sns
 #start code
 st.set_page_config(page_icon='🔍', layout='wide')
 
-#list of tests in scope - status: 7 / 31 complete ! 
+#list of tests in scope - status: 12 / 31 complete ! 
 stats_test_options = { 
     'Chi-square goodness of fit': 'done', #done
     'Chi-square test of independence': 'done', #done
@@ -38,16 +38,16 @@ stats_test_options = {
     'Exact test of Goodness of Fit (multinomial model)': 'To do',
     'Exact test of Goodness of Fit': 'To do',
     'Factorial ANOVA': 'To do',
-    'Fischers Exact test': 'To do', #working on
+    'Fischers Exact test': 'done', #done
     'G-test of Goodness of Fit': 'To do',
     'G-test': 'To do',
     'Independent samples T-test': 'done', #done
-    'Independent samples Z-test': 'To do',
+    'Independent samples Z-test': 'done', #done
     "Kendall's Tau": 'To do',
-    'Kruskal-Wallis': 'To do',
+    'Kruskal-Wallis': 'done', #done (but needs alternative test logic adding - as is, if assumptions not met, logic stops and nothing else to try)
     'Log-linear analysis': 'To do',
-    'Mann-Whitney U Test': 'To do',
-    'McNemars test': 'To do',
+    'Mann-Whitney U Test': 'To do', 
+    'McNemars test': 'done', #done
     'One-proportion z-test': 'To do',
     'One-way ANCOVA': 'To do',
     'One-way ANOVA': 'done', #done
@@ -59,7 +59,7 @@ stats_test_options = {
     "Point biserial correlation": 'To do',
     'Single sample T-test': 'done', #done
     'Single sample wilcoxon signed-rank test': 'To do',
-    'Single sample Z-test': 'To do',
+    'Single sample Z-test': 'done', #done
     "Spearman's Rho": 'To do',
     'Two proportion z-test': 'To do',
     'Wilcoxon signed-rank test': 'To do',
@@ -160,30 +160,46 @@ if debug_mode == 'Yes':
 else:
     df = pd.DataFrame(df_location)
 
-#--------------------------------------------
 
 
 st.header(':blue[Checking assumptions...]')
+
+#--------------------------------------------
+
+
+
 #display the test(s) applicable based on the inputs provided, along with any prior assumption checks before running the test, if applicable
 
 #CONTINUE FROM HERE
 #DEV SECTION - Working on chi square goodness of fit test
 
+#from stats_test_functions import one_sample_z_test as osz
+
+#--------------------------------
+
 try:
     test_bool_result = render_assumptions.render_assumptions_for_selected_test(selected_recommended_test, df)
+    if test_bool_result == None:
+        st.write('Make the required selections using the drop down boxes above')
+        st.stop()
 except:
     st.write('Make the required selections using the drop down boxes above')
     st.stop()
-    
+
 if test_bool_result == False:
     alt_test = render_assumptions.get_alternative_test(selected_recommended_test)
     st.write(f":red[Recommend using the alternative test: **{alt_test}**]")
     selected_recommended_test = alt_test
 
+
 #Identify the index of the recommended list. Use this later to default the test confirmation 
 #to the recommended test
-recommended_test_index = stats_test_options.index(selected_recommended_test)
 
+try:
+    recommended_test_index = stats_test_options.index(selected_recommended_test)
+    
+except:
+    st.stop()
 
 #if "Paired t-test (for normally distributed data)" in list_selected_recommended_test:
 #    normal_dist_can_use_paired_t = paired_t_test.render_assumption_checks_for_paired_t_test(df)

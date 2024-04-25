@@ -12,6 +12,11 @@ from stats_test_functions import one_sample_t_test
 from stats_test_functions import pearson_correlation
 from stats_test_functions import chi_square_goodness_of_fit as chi_gof
 from stats_test_functions import chi_square_test_of_independence as chi_toi
+from stats_test_functions import fishers_exact_test as fishers_et
+from stats_test_functions import mcnemars_test as mcnt
+from stats_test_functions import kruskal_wallis_test as kwt
+from stats_test_functions import independent_samples_z_test as izt
+from stats_test_functions import one_sample_z_test as ozt
 
 
 #-----------------------------------------
@@ -51,7 +56,7 @@ def render_assumptions_for_selected_test(selected_recommended_test, df):
         st.write(placeholder_text)
     
     elif selected_recommended_test == 'Fischers Exact test': 
-        st.write(placeholder_text)
+        test_assumptions_met = fishers_et.render_assumption_checks_for_fishers_exact_test(df)
     
     elif selected_recommended_test == 'G-test of Goodness of Fit': 
         st.write(placeholder_text)
@@ -63,13 +68,13 @@ def render_assumptions_for_selected_test(selected_recommended_test, df):
         test_assumptions_met = independent_t_test.render_assumption_checks_for_independent_t_test(df)
     
     elif selected_recommended_test == 'Independent samples Z-test': 
-        st.write(placeholder_text)
+        test_assumptions_met = izt.render_assumption_checks_for_independent_z_test(df)
     
     elif selected_recommended_test == "Kendall's Tau": 
         st.write(placeholder_text)
     
     elif selected_recommended_test == 'Kruskal-Wallis': 
-        st.write(placeholder_text)
+        test_assumptions_met = kwt.render_assumption_checks_for_kruskal_wallis_test(df)
     
     elif selected_recommended_test == 'Log-linear analysis': 
         st.write(placeholder_text)
@@ -78,7 +83,7 @@ def render_assumptions_for_selected_test(selected_recommended_test, df):
         st.write(placeholder_text)
     
     elif selected_recommended_test == 'McNemars test': 
-        st.write(placeholder_text)
+        test_assumptions_met = mcnt.render_assumption_checks_for_mcnemars_test(df)
     
     elif selected_recommended_test == 'One-proportion z-test': 
         st.write(placeholder_text)
@@ -116,7 +121,7 @@ def render_assumptions_for_selected_test(selected_recommended_test, df):
         st.write(placeholder_text)
     
     elif selected_recommended_test == 'Single sample Z-test': 
-        st.write(placeholder_text)
+        test_assumptions_met = ozt.render_assumption_checks_for_independent_z_test(df)
     
     elif selected_recommended_test == "Spearman's Rho": 
         st.write(placeholder_text)
@@ -143,11 +148,11 @@ def get_alternative_test(test_name):
     'Exact test of Goodness of Fit (multinomial model)': placeholder_text,
     'Exact test of Goodness of Fit': placeholder_text,
     'Factorial ANOVA': placeholder_text,
-    'Fischers Exact test': placeholder_text,
+    'Fischers Exact test': 'Chi-square test of independence',
     'G-test of Goodness of Fit': placeholder_text,
     'G-test': placeholder_text,
     'Independent samples T-test': placeholder_text,
-    'Independent samples Z-test': placeholder_text,
+    'Independent samples Z-test': 'Please see error message above.', #3 possible alternatives.. User given message if assumptions not met to inform their decision.
     "Kendall's Tau": placeholder_text,
     'Kruskal-Wallis': placeholder_text,
     'Log-linear analysis': placeholder_text,
@@ -164,7 +169,7 @@ def get_alternative_test(test_name):
     "Point biserial correlation": placeholder_text,
     'Single sample T-test': 'Wilcoxon signed-rank test', #done
     'Single sample wilcoxon signed-rank test': placeholder_text,
-    'Single sample Z-test': placeholder_text,
+    'Single sample Z-test': 'Single sample wilcoxon signed-rank test',
     "Spearman's Rho": placeholder_text,
     'Two proportion z-test': placeholder_text,
     'Wilcoxon signed-rank test': placeholder_text,

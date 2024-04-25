@@ -19,6 +19,11 @@ def independent_t_test_assumptions():
         'Equal Variances': "The variances of the two groups should be approximately equal. This assumption can be tested using Levene’s test or an F-test for equal variances.",
         'Normality': "The data in both groups should be approximately normally distributed. This is particularly important when sample sizes are small.",
     }
+
+    with st.expander("Click for Kruskal-Wallis test Assumptions"):
+        for key, value in dict_assumptions.items():
+            st.write(f":red[**{key}**:]\n{value}")
+
     return dict_assumptions
 
 
