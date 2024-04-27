@@ -17,6 +17,7 @@ from stats_test_functions import mcnemars_test as mcnt
 from stats_test_functions import kruskal_wallis_test as kwt
 from stats_test_functions import independent_samples_z_test as izt
 from stats_test_functions import one_sample_z_test as ozt
+from stats_test_functions import paired_z_test as pzt
 
 
 #-----------------------------------------
@@ -99,7 +100,7 @@ def render_assumptions_for_selected_test(selected_recommended_test, df):
         test_assumptions_met = paired_t_test.render_assumption_checks_for_paired_t_test(df)
     
     elif selected_recommended_test == 'Paired samples Z-test': 
-        st.write(placeholder_text)
+        test_assumptions_met = pzt.render_assumption_checks_for_paired_z_test(df)
     
     elif selected_recommended_test == 'Partial correlation': 
         st.write(placeholder_text)
@@ -162,7 +163,7 @@ def get_alternative_test(test_name):
     'One-way ANCOVA': placeholder_text,
     'One-way ANOVA': placeholder_text,
     'Paired samples T-test': 'Wilcoxon signed-rank test',
-    'Paired samples Z-test': placeholder_text,
+    'Paired samples Z-test': 'Please see error message above.',
     'Partial correlation': placeholder_text,
     'Pearson correlation': "Spearman's Rho", #done 
     'Phi co-efficient': placeholder_text,

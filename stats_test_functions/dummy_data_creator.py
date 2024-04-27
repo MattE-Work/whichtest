@@ -286,6 +286,35 @@ def create_dummy_data_independent_z_test(num_samples=1000, mean1=50, std1=5, mea
 
 #--------------------------
 
+def create_dummy_data_paired_z_test(num_samples=1000, mean1=50, std1=5, mean2=55, std2=5, correlation=0.5):
+    """
+    Generates a dummy dataset for testing the paired z-test in wide format.
+
+    Args:
+    num_samples (int): Number of paired samples.
+    mean1 (float): Mean of the first condition.
+    std1 (float): Standard deviation of the first condition.
+    mean2 (float): Mean of the second condition.
+    std2 (float): Standard deviation of the second condition.
+    correlation (float): Correlation between the paired samples.
+
+    Returns:
+    DataFrame: A pandas DataFrame with two columns, each representing a paired sample group.
+    """
+    # Generate the first set of data
+    data1 = np.random.normal(loc=mean1, scale=std1, size=num_samples)
+    
+    # Generate the second set of data, correlated with the first set
+    data2 = correlation * data1 + np.random.normal(loc=mean2, scale=std2, size=num_samples) * np.sqrt(1-correlation**2)
+    
+    # Create a DataFrame with wide format
+    df = pd.DataFrame({
+        'before': data1,
+        'after': data2
+    })
+    return df
+
+
 
 
 #--------------------------
@@ -349,6 +378,9 @@ def get_dummy_data_for_tests(selected_recommended_test):
 '''
 
 #-----------------------------------------
+
+
+#-----------------------------------------
 def get_dummy_data_for_tests(selected_recommended_test):
     """
     Returns a dictionary containing dummy data suitable for a variety of statistical tests.
@@ -392,7 +424,7 @@ def get_dummy_data_for_tests(selected_recommended_test):
     'One-way ANCOVA': placeholder_text,
     'One-way ANOVA': create_dummy_data_anova(),
     'Paired samples T-test': pd.DataFrame((base_data, base_data * 1.1)).T.rename(columns={0:'sample1_time_point_A', 1:'sample1_time_point_B'}),
-    'Paired samples Z-test': placeholder_text,
+    'Paired samples Z-test': create_dummy_data_paired_z_test(),
     'Partial correlation': placeholder_text,
     'Pearson correlation': create_dummy_data_pearson_correlation(),
     'Phi co-efficient': placeholder_text,
@@ -503,7 +535,7 @@ def expected_data_structure_examples(test_name):
             example_df = get_dummy_data_for_tests(test_name).iloc[:20,:]
 
         elif test_name == 'Paired samples Z-test':
-            st.write(placeholder_text)
+            example_df = get_dummy_data_for_tests(test_name).iloc[:20,:]
 
         elif test_name == 'Partial correlation':
             st.write(placeholder_text)

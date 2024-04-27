@@ -301,6 +301,29 @@ def explain_paired_t_test():
 
 #-----------------------------------------------------------------------
 
+def explain_paired_z_test():
+    explanation = """
+    The paired z-test is used to compare the means of two related groups or matched samples to determine if there is a statistically significant difference between them. It is similar to the paired t-test but is used when the population standard deviation is known and the sample size is large enough for the z-distribution to be appropriate.
+    """
+    requirements = """
+    Requirements for the paired z-test include:
+    - Two sets of continuous data that are paired or matched, such as measurements before and after a specific intervention.
+    - The population standard deviations (variances) should be known, which is less common in practice.
+    - The sample size should be large, typically over 30 pairs, to satisfy the central limit theorem, which justifies the use of the z-distribution.
+    """
+    example_context = """
+    Healthcare Example:
+    Imagine a clinical trial where the effectiveness of a new drug is assessed by measuring cholesterol levels in patients before and after the drug administration using the same group of patients. The paired z-test can be used to analyze whether there is a significant difference in cholesterol levels due to the drug.
+    """
+
+    test_type = "Parametric"
+
+    return {'Explanation': explanation, 'Requirements': requirements, 'Example Context': example_context, 'Test Type': test_type}
+
+
+
+#-----------------------------------------------------------------------
+
 # ANOVA
 def explain_anova():
     explanation = """
@@ -483,7 +506,7 @@ def get_dict_test_explanation(test_name):
     'One-way ANCOVA': placeholder_text,
     'One-way ANOVA': explain_anova(),
     'Paired samples T-test': explain_paired_t_test(),
-    'Paired samples Z-test': placeholder_text,
+    'Paired samples Z-test': explain_paired_z_test(),
     'Partial correlation': placeholder_text,
     'Pearson correlation': explain_pearson_correlation(),
     'Phi co-efficient': placeholder_text,
@@ -554,7 +577,7 @@ def get_test_explanation_video(test_name):
     'One-way ANCOVA': placeholder_text,
     'One-way ANOVA': 'https://youtu.be/0NwA9xxxtHw?si=9v6gx6prN6tKmEIC',
     'Paired samples T-test': 'https://youtu.be/_7IW2PUqe64?si=34J7xDSPI07f7NFX',
-    'Paired samples Z-test': placeholder_text,
+    'Paired samples Z-test': 'https://www.statstest.com/paired-samples-z-test/',
     'Partial correlation': placeholder_text,
     'Pearson correlation': 'https://youtu.be/k7IctLRiZmo?si=auIioQ9hPPNis_Xv',
     'Phi co-efficient': placeholder_text,

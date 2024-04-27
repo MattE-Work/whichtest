@@ -52,7 +52,7 @@ stats_test_options = {
     'One-way ANCOVA': 'To do',
     'One-way ANOVA': 'done', #done
     'Paired samples T-test': 'done', #done
-    'Paired samples Z-test': 'To do',
+    'Paired samples Z-test': 'done', #done
     'Partial correlation': 'To do',
     'Pearson correlation': 'done', #done 
     'Phi co-efficient': 'To do',
@@ -69,10 +69,12 @@ stats_test_options = {
 stats_test_options_subset = [key for key, value in stats_test_options.items() if value == 'done']
 
 st.title(':blue[Which Stats Test?]')
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 with col1:
-    debug_mode = st.radio(label='Turn on debug mode (load dummy data)?', options=['Yes', 'No'], horizontal=True, index=1)
+    load_dummy_data = st.radio(label='Load dummy data to test the tool?', options=['Yes', 'No'], horizontal=True, index=1)
 with col2:
+    debug_mode = st.radio(label='Turn on debug mode?', options=['Yes', 'No'], horizontal=True, index=1)
+with col3:
     filter_to_just_completed_tests = st.radio(label=f'Only inc. the {len(stats_test_options_subset)} built tests?', options=['Yes', 'No'], horizontal=True, index=1)
 
 #determine whether to subset the pick-list to just the tests that are built
@@ -105,8 +107,11 @@ if how_to_use_tool != 'Select a test from the list':
         with col2:
             st.write(list_recommendations)
 
+    st.header(':blue[Recommended Stats Test(s):]')
+
+else:
+    st.header(':blue[Select the stats test to use:]')
 # ----------------------------
-st.header(':blue[Recommended Stats Test(s):]')
 
 if how_to_use_tool != 'Select a test from the list':
     selected_recommended_test = st.selectbox(label='Select the recommended test to use', options=list_recommendations, index=0)
@@ -119,7 +124,11 @@ else:
 #list_selected_recommended_test = []
 #list_selected_recommended_test.append(selected_recommended_test)
 
-dict_test_explanations = st_exp.get_dict_test_explanation(selected_recommended_test)
+try:
+    dict_test_explanations = st_exp.get_dict_test_explanation(selected_recommended_test)
+except:
+    st.write('The assumption checks for this test have not been built yet 😞, please select a different test from the list above 🙄. To filter the selection list to just tests that do have assumption checks built (and no longer see this message 😉), use the radio buttons to the top right 👆🏻👉🏻')
+    st.stop()
 
 #st.subheader(test_name_for_expander)
 with st.expander(f"Click for information about this test"):
@@ -130,13 +139,17 @@ with st.expander(f"Click for information about this test"):
         with tab:
             if key != 'video':
                 st.write(dict_test_explanations[key])  # Display the content under each tab corresponding to the key
-            else:
+            elif "youtu" in dict_test_explanations[key]:
                 width=40
                 side = max((100 - width) / 2, 0.01)
 
                 #st.video(test_details[key])
                 _, container, _ = st.columns([side, width, side])
                 container.video(data=dict_test_explanations[key])
+            else:
+                st.write(f"""A video isn't incorporated for this test yet. 
+                Please refer to the url below for more information about this test:
+                \n{dict_test_explanations[key]}""")
 
 # ----------------------------
 
@@ -147,10 +160,10 @@ st.header(':blue[Select your data]')
 df_location = st.file_uploader("Select the file containing your data you wish to run through the appropriate stats test", type=['csv', 'xlsx'])
 dummy_data.expected_data_structure_examples(selected_recommended_test)
 
-if df_location is None and debug_mode != 'Yes':
+if df_location is None and load_dummy_data != 'Yes':
     st.stop()
 
-if debug_mode == 'Yes':
+if load_dummy_data == 'Yes':
     #produce dummy data
     df = dummy_data.get_dummy_data_for_tests(selected_recommended_test)
 
@@ -173,7 +186,8 @@ st.header(':blue[Checking assumptions...]')
 #CONTINUE FROM HERE
 #DEV SECTION - Working on chi square goodness of fit test
 
-#from stats_test_functions import one_sample_z_test as osz
+
+#test_bool = pzt.render_assumption_checks_for_paired_z_test(df)
 
 #--------------------------------
 
